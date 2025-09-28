@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	apierror "surf_challenge/internal/api/error"
+	"surf_challenge/internal/api/apierror"
 	"surf_challenge/internal/api/user/dto"
 	"surf_challenge/internal/api/user/mapper"
 	"surf_challenge/internal/user"
@@ -111,5 +111,5 @@ func extractQueryParams(r *http.Request) (*int64, int, int, error) {
 		return nil, 0, 0, apierror.NewAPIError("invalid pageSize parameter", http.StatusBadRequest)
 	}
 
-	return &userID, 0, 0, nil
+	return &userID, page, pageSize, nil
 }

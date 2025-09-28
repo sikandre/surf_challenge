@@ -1,0 +1,114 @@
+version: "2"
+run:
+  go: "1.24"
+
+linters:
+  default: all
+  disable:
+    - canonicalheader
+    - cyclop
+    - depguard
+    - dupl
+    - err113
+    - exhaustruct
+    - funlen
+    - gochecknoglobals
+    - gocritic
+    - gomoddirectives
+    - ireturn
+    - nilnil
+    - nolintlint
+    - nosprintfhostport
+    - paralleltest
+    - protogetter
+    - tagliatelle
+    - varnamelen
+    - wrapcheck
+    - wsl
+  settings:
+    funcorder:
+      struct-method: false
+    dupl:
+      threshold: 100
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+    gocyclo:
+      min-complexity: 25
+    godot:
+      period: false
+    interfacebloat:
+      max: 25
+    lll:
+      line-length: 140
+    nestif:
+      min-complexity: 9
+    tagliatelle:
+      case:
+        rules:
+          json: camel
+          yaml: snake
+        use-field-name: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+    rules:
+      - linters:
+          - containedctx
+          - dupl
+          - dupword
+          - err113
+          - exhaustruct
+          - funlen
+          - lll
+          - maintidx
+          - musttag
+          - perfsprint
+          - revive
+          - testpackage
+        path: _test\.go
+      - linters:
+          - revive
+        text: blank-imports
+      - linters:
+          - revive
+        text: apierror-strings
+      - linters:
+          - revive
+        text: unexported-return
+      - linters:
+          - err113
+        text: 'err113: do not define dynamic errors'
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+
+issues:
+  fix: true
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(gitlab.com/cynergybank/fusion-reboot-poc/backend/applications-api)
+        - blank
+    goimports:
+      local-prefixes:
+        - gitlab.com/cynergybank/fusion-reboot-poc/backend/applications-api
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

@@ -7,22 +7,19 @@ import (
 	"surf_challenge/internal/user/domain"
 )
 
-var (
-	ErrNotFound = errors.New("not found")
-)
+var ErrNotFound = errors.New("not found")
 
 type Service interface {
-	QueryUsers(context.Context, domain.Query) ([]domain.User, *domain.Results, error)
+	QueryUsers(ctx context.Context, query domain.Query) ([]domain.User, *domain.Results, error)
 }
 
-type userService struct {
-}
+type userService struct{}
 
 func NewService() Service {
 	return &userService{}
 }
 
-func (s *userService) QueryUsers(context.Context, domain.Query) ([]domain.User, *domain.Results, error) {
+func (s *userService) QueryUsers(_ context.Context, _ domain.Query) ([]domain.User, *domain.Results, error) {
 	// Implement the logic to query users from the data source
 	return nil, nil, nil
 }

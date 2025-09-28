@@ -1,12 +1,8 @@
-package error
+package apierror
 
 type APIError struct {
 	Message string `json:"message"`
 	Code    int    `json:"code"`
-}
-
-func (e *APIError) Error() string {
-	return e.Message
 }
 
 func NewAPIError(message string, code int) *APIError {
@@ -14,4 +10,8 @@ func NewAPIError(message string, code int) *APIError {
 		Message: message,
 		Code:    code,
 	}
+}
+
+func (e *APIError) Error() string {
+	return e.Message
 }
