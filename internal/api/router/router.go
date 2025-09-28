@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
-
 	"surf_challenge/internal/api/user"
 	"surf_challenge/internal/container"
 )

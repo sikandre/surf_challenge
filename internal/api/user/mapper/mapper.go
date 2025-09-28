@@ -3,6 +3,7 @@ package mapper
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"time"
 
 	"surf_challenge/internal/api/apierror"
@@ -46,8 +47,10 @@ func MapPaginationToDTO(pagination *domain.Results, page int, size int) dto.Pagi
 }
 
 func MapUserToDTO(u *domain.User) dto.User {
+	id := strconv.Itoa(int(u.ID))
+
 	return dto.User{
-		ID:        u.ID,
+		ID:        id,
 		Name:      u.Name,
 		CreatedAt: u.CreatedAt.Format(time.RFC3339),
 	}

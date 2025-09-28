@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"go.uber.org/zap"
 
 	"surf_challenge/internal/api/router"
 	"surf_challenge/internal/container"
@@ -32,7 +33,9 @@ func main() {
 	}
 
 	sugar := logger.Sugar()
-	defer logger.Sync()
+	defer func() {
+		_ = logger.Sync()
+	}()
 
 	sugar.Info("Logger initialized")
 

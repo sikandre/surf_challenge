@@ -7,7 +7,7 @@ type Results struct {
 }
 
 type User struct {
-	ID        string
+	ID        int64
 	Name      string
 	CreatedAt time.Time
 }

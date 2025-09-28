@@ -2,7 +2,6 @@ package container
 
 import (
 	"go.uber.org/zap"
-
 	"surf_challenge/internal/user"
 	"surf_challenge/internal/user/storage"
 )

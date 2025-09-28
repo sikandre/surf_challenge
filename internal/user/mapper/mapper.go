@@ -26,6 +26,7 @@ func MapUserEntToDomain(u *entity.User) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &domain.User{
 		ID:        u.ID,
 		Name:      u.Name,
