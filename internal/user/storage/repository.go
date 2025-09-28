@@ -13,7 +13,7 @@ var (
 	usersOnce  sync.Once
 	usersCache []*entity.User
 	totalUsers int
-	usersErr   error
+	errUsers   error
 )
 
 type Repository interface {
@@ -26,7 +26,7 @@ func NewRepository() Repository {
 	return &userRepository{}
 }
 
-func (u *userRepository) QueryUsers(ctx context.Context, id *int64, page int, size int) ([]*entity.User, int, error) {
+func (u *userRepository) QueryUsers(_ context.Context, id *int64, page int, size int) ([]*entity.User, int, error) {
 	users, totalResults, err := loadFileWithUsers()
 	if err != nil {
 		return nil, 0, err
@@ -44,12 +44,12 @@ func (u *userRepository) QueryUsers(ctx context.Context, id *int64, page int, si
 	if offset >= totalResults {
 		return []*entity.User{}, totalResults, nil
 	}
+
 	end := offset + size
 	if end > totalResults {
 		end = totalResults
 	}
 
-	// devolve só a janela pedida
 	return users[offset:end], totalResults, nil
 }
 
@@ -59,15 +59,16 @@ var usersFile []byte
 func loadFileWithUsers() ([]*entity.User, int, error) {
 	usersOnce.Do(
 		func() {
-			usersCache, totalUsers, usersErr = parseUsersFile()
+			usersCache, totalUsers, errUsers = parseUsersFile()
 		},
 	)
 
-	return usersCache, totalUsers, usersErr
+	return usersCache, totalUsers, errUsers
 }
 
 func parseUsersFile() ([]*entity.User, int, error) {
 	var users []*entity.User
+
 	err := json.Unmarshal(usersFile, &users)
 	if err != nil {
 		return nil, 0, err

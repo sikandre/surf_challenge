@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"go.uber.org/zap"
-
 	"surf_challenge/internal/api/apierror"
 	"surf_challenge/internal/api/user/dto"
 	"surf_challenge/internal/api/user/mapper"
@@ -85,6 +84,7 @@ func (h *usersHandler) handleGetUsers(r *http.Request) (*dto.UsersResponse, erro
 
 func extractQueryParams(r *http.Request) (*int64, int, int, error) {
 	var userID *int64
+
 	userIDStr := r.URL.Query().Get("userId")
 	if userIDStr != "" {
 		userIDParsed, err := strconv.ParseInt(userIDStr, 10, 64)
