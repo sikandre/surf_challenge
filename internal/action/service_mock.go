@@ -55,3 +55,18 @@ func (mr *MockServiceMockRecorder) GetActionByUserID(ctx, userID any) *gomock.Ca
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionByUserID", reflect.TypeOf((*MockService)(nil).GetActionByUserID), ctx, userID)
 }
+
+// GetNextActionProbability mocks base method.
+func (m *MockService) GetNextActionProbability(ctx context.Context, action string) (map[string]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNextActionProbability", ctx, action)
+	ret0, _ := ret[0].(map[string]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNextActionProbability indicates an expected call of GetNextActionProbability.
+func (mr *MockServiceMockRecorder) GetNextActionProbability(ctx, action any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNextActionProbability", reflect.TypeOf((*MockService)(nil).GetNextActionProbability), ctx, action)
+}

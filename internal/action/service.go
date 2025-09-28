@@ -14,6 +14,7 @@ import (
 //go:generate mockgen -source=service.go -destination=service_mock.go -package=action
 type Service interface {
 	GetActionByUserID(ctx context.Context, userID int64) ([]*domain.Action, error)
+	GetNextActionProbability(ctx context.Context, action string) (map[string]string, error)
 }
 
 type service struct {
@@ -39,4 +40,12 @@ func (s service) GetActionByUserID(ctx context.Context, userID int64) ([]*domain
 	actionsDomain := mapper.MapActionsEntToDomain(actions)
 
 	return actionsDomain, nil
+}
+
+func (s service) GetNextActionProbability(ctx context.Context, action string) (map[string]string, error) {
+	return map[string]string{
+		"click": "0.5",
+		"view":  "0.3",
+		"like":  "0.2",
+	}, nil
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 
+	"surf_challenge/internal/api/action"
 	"surf_challenge/internal/api/user"
 	"surf_challenge/internal/container"
 )
@@ -14,6 +15,7 @@ func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Ha
 	router := chi.NewRouter()
 
 	usersHandler := user.NewHandler(sugar, dependencies.UserService)
+	actionsHandler := action.NewHandler(sugar, dependencies.ActionService)
 
 	router.Route(
 		"/api/v1", func(r chi.Router) {
@@ -24,6 +26,13 @@ func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Ha
 					r.Get("/{userId}/actions/count", usersHandler.GetUserActionCount())
 				},
 			)
+
+			r.Route(
+				"/actions", func(r chi.Router) {
+					r.Get("/next-probability", actionsHandler.GetNextActionProbability())
+				},
+			)
+
 		},
 	)
 
