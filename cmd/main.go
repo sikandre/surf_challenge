@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
@@ -25,14 +26,23 @@ const (
 )
 
 func main() {
-	log.Println("Starting server...")
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	dependencies := container.NewAppContainer()
+	sugar := logger.Sugar()
+	defer logger.Sync()
 
-	mux := router.New(dependencies)
+	sugar.Info("Logger initialized")
+
+	dependencies := container.NewAppContainer(sugar)
+
+	mux := router.New(sugar, dependencies)
 
 	addr := fmt.Sprintf(":%d", port)
-	log.Printf("Listening on %s", addr)
+
+	sugar.Infof("Starting server on %s", addr)
 
 	srv := &http.Server{
 		Addr:              addr,
@@ -56,15 +66,15 @@ func main() {
 	signal.Notify(stop, os.Interrupt)
 	<-stop
 
-	log.Println("Shutting down...")
+	sugar.Info("Received interrupt signal, shutting down...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), duration)
 	defer cancel()
 
-	err := srv.Shutdown(ctx)
+	err = srv.Shutdown(ctx)
 	if err != nil {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
 
-	log.Println("Server exiting")
+	logger.Info("Server exiting")
 }

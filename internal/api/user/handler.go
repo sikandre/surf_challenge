@@ -3,9 +3,10 @@ package user
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
+
+	"go.uber.org/zap"
 
 	"surf_challenge/internal/api/apierror"
 	"surf_challenge/internal/api/user/dto"
@@ -19,11 +20,13 @@ type Handler interface {
 }
 
 type usersHandler struct {
+	logger  *zap.SugaredLogger
 	service user.Service
 }
 
-func NewHandler(service user.Service) Handler {
+func NewHandler(sugar *zap.SugaredLogger, service user.Service) Handler {
 	return &usersHandler{
+		logger:  sugar,
 		service: service,
 	}
 }
@@ -32,7 +35,7 @@ func (h *usersHandler) GetUsers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp, err := h.handleGetUsers(r)
 		if err != nil {
-			log.Println("failed to get users:", err)
+			h.logger.Errorw("failed to get users", "error", err)
 
 			apiError := mapper.MapErrors(err)
 			http.Error(w, apiError.Message, apiError.Code)
@@ -43,7 +46,7 @@ func (h *usersHandler) GetUsers() http.HandlerFunc {
 
 		err = json.NewEncoder(w).Encode(resp)
 		if err != nil {
-			log.Println("failed to encode response:", err)
+			h.logger.Errorw("failed to encode response", "error", err)
 			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		}
 	}

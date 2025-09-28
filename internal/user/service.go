@@ -3,7 +3,8 @@ package user
 import (
 	"context"
 	"errors"
-	"log"
+
+	"go.uber.org/zap"
 
 	"surf_challenge/internal/user/domain"
 	"surf_challenge/internal/user/mapper"
@@ -17,17 +18,19 @@ type Service interface {
 }
 
 type userService struct {
-	repo storage.Repository
+	logger *zap.SugaredLogger
+	repo   storage.Repository
 }
 
-func NewService(repo storage.Repository) Service {
+func NewService(logger *zap.SugaredLogger, repo storage.Repository) Service {
 	return &userService{
-		repo: repo,
+		logger: logger,
+		repo:   repo,
 	}
 }
 
 func (s *userService) QueryUsers(ctx context.Context, query domain.Query) ([]*domain.User, *domain.Results, error) {
-	log.Println("QueryUsers called with query:", query)
+	s.logger.Infow("QueryUsers called", "query", query)
 
 	users, totalResults, err := s.repo.QueryUsers(ctx)
 	if err != nil {

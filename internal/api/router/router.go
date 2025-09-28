@@ -4,14 +4,16 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
+
 	"surf_challenge/internal/api/user"
 	"surf_challenge/internal/container"
 )
 
-func New(dependencies *container.AppContainer) http.Handler {
+func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Handler {
 	router := chi.NewRouter()
 
-	usersHandler := user.NewHandler(dependencies.UserService)
+	usersHandler := user.NewHandler(sugar, dependencies.UserService)
 
 	router.Route(
 		"/users", func(r chi.Router) {
