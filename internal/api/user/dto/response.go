@@ -17,3 +17,7 @@ type UsersResponse struct {
 	Users      []User     `json:"users"`
 	Pagination Pagination `json:"pagination"`
 }
+
+type ActionsCount struct {
+	Count int `json:"count"`
+}

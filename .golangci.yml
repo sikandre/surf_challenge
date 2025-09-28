@@ -95,13 +95,16 @@ formatters:
     - gci
     - gofmt
     - gofumpt
-    - goimports
   settings:
     gci:
       sections:
         - standard
         - default
         - blank
+        - localmodule
+    goimports:
+      local-prefixes:
+        - surf_challenge
   exclusions:
     generated: lax
     paths:

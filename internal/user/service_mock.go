@@ -41,6 +41,21 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
+// GetUserActionCount mocks base method.
+func (m *MockService) GetUserActionCount(ctx context.Context, id int64) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserActionCount", ctx, id)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserActionCount indicates an expected call of GetUserActionCount.
+func (mr *MockServiceMockRecorder) GetUserActionCount(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserActionCount", reflect.TypeOf((*MockService)(nil).GetUserActionCount), ctx, id)
+}
+
 // QueryUsers mocks base method.
 func (m *MockService) QueryUsers(ctx context.Context, query domain.Query) ([]*domain.User, *domain.Results, error) {
 	m.ctrl.T.Helper()

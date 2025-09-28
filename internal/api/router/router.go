@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
+
 	"surf_challenge/internal/api/user"
 	"surf_challenge/internal/container"
 )
@@ -19,6 +20,7 @@ func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Ha
 			r.Route(
 				"/users", func(r chi.Router) {
 					r.Get("/", usersHandler.GetUsers())
+					r.Get("/{userId}/actions/count", usersHandler.GetUserActionCount())
 				},
 			)
 		},

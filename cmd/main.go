@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+
 	"surf_challenge/internal/api/router"
 	"surf_challenge/internal/container"
 )

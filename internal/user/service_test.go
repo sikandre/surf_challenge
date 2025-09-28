@@ -18,6 +18,7 @@ func Test_userService_QueryUsers(t *testing.T) {
 		logger *zap.SugaredLogger
 		repo   *storage.MockRepository
 	}
+
 	tests := []struct {
 		name        string
 		mock        func(m *mocks)

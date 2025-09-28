@@ -3,12 +3,15 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"sync"
 
-	"surf_challenge/internal/user/storage/entity"
-
 	_ "embed"
+
+	"surf_challenge/internal/user/storage/entity"
 )
+
+var ErrUserNotFound = errors.New("user not found")
 
 var (
 	usersOnce  sync.Once
@@ -20,6 +23,7 @@ var (
 //go:generate mockgen -source=repository.go -destination=repository_mock.go -package=storage
 type Repository interface {
 	QueryUsers(ctx context.Context, id *int64, page int, size int) ([]*entity.User, int, error)
+	GetUserByID(ctx context.Context, id int64) (*entity.User, error)
 }
 
 type userRepository struct{}
@@ -28,7 +32,7 @@ func NewRepository() Repository {
 	return &userRepository{}
 }
 
-func (u *userRepository) QueryUsers(_ context.Context, id *int64, page int, size int) ([]*entity.User, int, error) {
+func (ur *userRepository) QueryUsers(_ context.Context, id *int64, page int, size int) ([]*entity.User, int, error) {
 	users, totalResults, err := loadFileWithUsers()
 	if err != nil {
 		return nil, 0, err
@@ -53,6 +57,21 @@ func (u *userRepository) QueryUsers(_ context.Context, id *int64, page int, size
 	}
 
 	return users[offset:end], totalResults, nil
+}
+
+func (ur *userRepository) GetUserByID(_ context.Context, id int64) (*entity.User, error) {
+	users, _, err := loadFileWithUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, user := range users {
+		if user.ID == id {
+			return user, nil
+		}
+	}
+
+	return nil, ErrUserNotFound
 }
 
 //go:embed db/users.json
