@@ -16,9 +16,9 @@ import (
 	"go.uber.org/zap"
 
 	"surf_challenge/internal/api/user/dto"
+	"surf_challenge/internal/converter"
 	"surf_challenge/internal/user"
 	"surf_challenge/internal/user/domain"
-	"surf_challenge/internal/utils"
 )
 
 func Test_usersHandler_GetUsers(t *testing.T) {
@@ -58,6 +58,8 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 			},
 			wantStatus: http.StatusOK,
 			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
 				want := &dto.UsersResponse{
 					Users: []dto.User{
 						{
@@ -88,7 +90,7 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 				m.service.EXPECT().QueryUsers(
 					gomock.Any(),
 					domain.Query{
-						ID:       utils.ToPtr(int64(1)),
+						ID:       converter.ToPtr(int64(1)),
 						Page:     1,
 						PageSize: 10,
 					},
@@ -106,6 +108,8 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 			},
 			wantStatus: http.StatusOK,
 			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
 				want := &dto.UsersResponse{
 					Users: []dto.User{
 						{
@@ -155,6 +159,8 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 			},
 			wantStatus: http.StatusOK,
 			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
 				want := &dto.UsersResponse{
 					Users: []dto.User{
 						{
@@ -185,7 +191,7 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 				m.service.EXPECT().QueryUsers(
 					gomock.Any(),
 					domain.Query{
-						ID:       utils.ToPtr(int64(1)),
+						ID:       converter.ToPtr(int64(1)),
 						Page:     1,
 						PageSize: 10,
 					},
@@ -197,6 +203,8 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 			},
 			wantStatus: http.StatusOK,
 			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
 				want := &dto.UsersResponse{
 					Users: []dto.User{},
 					Pagination: dto.Pagination{
@@ -231,6 +239,8 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 			},
 			wantStatus: http.StatusInternalServerError,
 			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
 				assert.Contains(t, r.Body.String(), "Internal server error")
 			},
 		},
@@ -242,6 +252,8 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 			mock:       func(m *mocks) {},
 			wantStatus: http.StatusBadRequest,
 			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
 				assert.Contains(t, r.Body.String(), "invalid userId parameter")
 			},
 		},
@@ -262,10 +274,12 @@ func Test_usersHandler_GetUsers(t *testing.T) {
 				rctx := chi.NewRouteContext()
 
 				u, _ := url.Parse("/api/v1/users")
+
 				vals := u.Query()
 				for k, v := range tt.query {
 					vals.Set(k, v)
 				}
+
 				u.RawQuery = vals.Encode()
 
 				req, err := http.NewRequestWithContext(
