@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"go.uber.org/zap"
+
 	"surf_challenge/internal/user/domain"
 	"surf_challenge/internal/user/mapper"
 	"surf_challenge/internal/user/storage"
@@ -31,7 +32,7 @@ func NewService(logger *zap.SugaredLogger, repo storage.Repository) Service {
 func (s *userService) QueryUsers(ctx context.Context, query domain.Query) ([]*domain.User, *domain.Results, error) {
 	s.logger.Infow("QueryUsers called", "query", query)
 
-	users, totalResults, err := s.repo.QueryUsers(ctx)
+	users, totalResults, err := s.repo.QueryUsers(ctx, query.ID, query.Page, query.PageSize)
 	if err != nil {
 		return nil, nil, err
 	}
