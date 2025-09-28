@@ -230,3 +230,84 @@ func Test_userService_GetUserActionCount(t *testing.T) {
 		)
 	}
 }
+
+func Test_userService_GetUserByID(t *testing.T) {
+	type mocks struct {
+		logger *zap.SugaredLogger
+		repo   *storage.MockRepository
+	}
+	tests := []struct {
+		name    string
+		id      int64
+		mock    func(m *mocks)
+		want    *domain.User
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "should return user successfully",
+			id:   1,
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetUserByID(gomock.Any(), int64(1)).
+					Return(
+						&entity.User{
+							ID:        1,
+							Name:      "John Doe",
+							CreatedAt: "2023-10-01T10:00:00Z",
+						}, nil,
+					)
+			},
+			want: &domain.User{
+				ID:        1,
+				Name:      "John Doe",
+				CreatedAt: time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "should return error when user not found",
+			id:   99,
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetUserByID(gomock.Any(), int64(99)).
+					Return(nil, storage.ErrUserNotFound)
+			},
+			want: nil,
+			wantErr: func(t assert.TestingT, err error, _ ...interface{}) bool {
+				return assert.ErrorIs(t, err, ErrNotFound)
+			},
+		},
+		{
+			name: "should return error when repository fails",
+			id:   1,
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetUserByID(gomock.Any(), int64(1)).
+					Return(nil, assert.AnError)
+			},
+			want:    nil,
+			wantErr: assert.Error,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
+				defer ctrl.Finish()
+
+				m := &mocks{
+					logger: zap.NewNop().Sugar(),
+					repo:   storage.NewMockRepository(ctrl),
+				}
+
+				tt.mock(m)
+
+				s := &userService{
+					logger: m.logger,
+					repo:   m.repo,
+				}
+				got, err := s.GetUserByID(t.Context(), tt.id)
+
+				assert.Equal(t, tt.want, got)
+				tt.wantErr(t, err)
+			},
+		)
+	}
+}

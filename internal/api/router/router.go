@@ -20,6 +20,7 @@ func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Ha
 			r.Route(
 				"/users", func(r chi.Router) {
 					r.Get("/", usersHandler.GetUsers())
+					r.Get("/{userId}", usersHandler.GetUserByID())
 					r.Get("/{userId}/actions/count", usersHandler.GetUserActionCount())
 				},
 			)

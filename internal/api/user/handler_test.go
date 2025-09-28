@@ -398,3 +398,126 @@ func Test_usersHandler_GetUserActionCount(t *testing.T) {
 		)
 	}
 }
+
+func Test_usersHandler_GetUserByID(t *testing.T) {
+	type mocks struct {
+		logger  *zap.SugaredLogger
+		service *user.MockService
+	}
+	tests := []struct {
+		name       string
+		userID     string
+		mock       func(m *mocks)
+		wantstatus int
+		assertBody func(*testing.T, *httptest.ResponseRecorder)
+	}{
+		{
+			name:   "When user ID is valid, should return the user",
+			userID: "1",
+			mock: func(m *mocks) {
+				m.service.EXPECT().GetUserByID(
+					gomock.Any(),
+					int64(1),
+				).Return(
+					&domain.User{
+						ID:        1,
+						Name:      "John Doe",
+						CreatedAt: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+					},
+					nil,
+				)
+			},
+			wantstatus: http.StatusOK,
+			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
+				want := dto.User{
+					ID:        "1",
+					Name:      "John Doe",
+					CreatedAt: "2023-01-01T00:00:00Z",
+				}
+
+				expected, err := json.Marshal(want)
+				require.NoError(t, err)
+				assert.JSONEq(t, string(expected), r.Body.String())
+			},
+		},
+		{
+			name:       "When user ID is not an integer, should return bad request",
+			userID:     "abc",
+			mock:       func(m *mocks) {},
+			wantstatus: http.StatusBadRequest,
+			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
+				assert.Contains(t, r.Body.String(), "invalid userId parameter")
+			},
+		},
+		{
+			name:   "When service returns an error, should return internal server error",
+			userID: "1",
+			mock: func(m *mocks) {
+				m.service.EXPECT().GetUserByID(
+					gomock.Any(),
+					int64(1),
+				).Return(nil, assert.AnError)
+			},
+			wantstatus: http.StatusInternalServerError,
+			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
+				assert.Contains(t, r.Body.String(), "Internal server error")
+			},
+		},
+		{
+			name:   "When user is not found, should return not found",
+			userID: "1",
+			mock: func(m *mocks) {
+				m.service.EXPECT().GetUserByID(
+					gomock.Any(),
+					int64(1),
+				).Return(nil, user.ErrNotFound)
+			},
+			wantstatus: http.StatusNotFound,
+			assertBody: func(t *testing.T, r *httptest.ResponseRecorder) {
+				t.Helper()
+
+				assert.Contains(t, r.Body.String(), "Resource not found")
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
+				defer ctrl.Finish()
+
+				m := &mocks{
+					logger:  zap.NewNop().Sugar(),
+					service: user.NewMockService(ctrl),
+				}
+
+				tt.mock(m)
+
+				rctx := chi.NewRouteContext()
+
+				u, _ := url.Parse("/api/v1/users/" + tt.userID)
+				rctx.URLParams.Add("userId", tt.userID)
+
+				req, err := http.NewRequestWithContext(
+					context.WithValue(t.Context(), chi.RouteCtxKey, rctx),
+					http.MethodGet,
+					u.String(),
+					nil,
+				)
+				require.NoError(t, err)
+
+				recorder := httptest.NewRecorder()
+				h := NewHandler(m.logger, m.service)
+				h.GetUserByID().ServeHTTP(recorder, req)
+
+				tt.assertBody(t, recorder)
+			},
+		)
+	}
+}

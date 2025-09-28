@@ -19,6 +19,7 @@ import (
 type Handler interface {
 	GetUsers() http.HandlerFunc
 	GetUserActionCount() http.HandlerFunc
+	GetUserByID() http.HandlerFunc
 }
 
 type usersHandler struct {
@@ -41,6 +42,8 @@ func (h *usersHandler) GetUsers() http.HandlerFunc {
 
 			apiError := mapper.MapErrors(err)
 			http.Error(w, apiError.Message, apiError.Code)
+
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -165,6 +168,52 @@ func (h *usersHandler) handleGetUserActionCount(r *http.Request) (*dto.ActionsCo
 	resp := &dto.ActionsCount{
 		Count: count,
 	}
+
+	return resp, nil
+}
+
+func (h *usersHandler) GetUserByID() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp, err := h.handleGetUserByID(r)
+		if err != nil {
+			h.logger.Errorw("failed to get user by ID", "error", err)
+
+			apiError := mapper.MapErrors(err)
+			http.Error(w, apiError.Message, apiError.Code)
+
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		err = json.NewEncoder(w).Encode(resp)
+		if err != nil {
+			h.logger.Errorw("failed to encode response", "error", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	}
+}
+
+func (h *usersHandler) handleGetUserByID(r *http.Request) (dto.User, error) {
+	ctx := r.Context()
+
+	userIDStr := chi.URLParam(r, "userId")
+	if userIDStr == "" {
+		return dto.User{}, apierror.NewAPIError("userId parameter is required", http.StatusBadRequest)
+	}
+
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		return dto.User{}, apierror.NewAPIError("invalid userId parameter", http.StatusBadRequest)
+	}
+
+	userEntity, err := h.service.GetUserByID(ctx, userID)
+	if err != nil {
+		return dto.User{}, fmt.Errorf("getting user by ID: %w", err)
+	}
+
+	resp := mapper.MapUserToDTO(userEntity)
 
 	return resp, nil
 }

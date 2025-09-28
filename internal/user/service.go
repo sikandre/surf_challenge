@@ -19,6 +19,7 @@ var ErrNotFound = errors.New("not found")
 type Service interface {
 	QueryUsers(ctx context.Context, query domain.Query) ([]*domain.User, *domain.Results, error)
 	GetUserActionCount(ctx context.Context, userID int64) (int, error)
+	GetUserByID(ctx context.Context, id int64) (*domain.User, error)
 }
 
 type userService struct {
@@ -73,4 +74,24 @@ func (s *userService) GetUserActionCount(ctx context.Context, userID int64) (int
 	}
 
 	return len(actions), nil
+}
+
+func (s *userService) GetUserByID(ctx context.Context, id int64) (*domain.User, error) {
+	s.logger.Infow("GetUserByID called", "id", id)
+
+	userEnt, err := s.repo.GetUserByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, storage.ErrUserNotFound) {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("failed to get user by ID: %w", err)
+	}
+
+	userDomain, err := mapper.MapUserEntToDomain(userEnt)
+	if err != nil {
+		return nil, fmt.Errorf("failed to map user entity to domain: %w", err)
+	}
+
+	return userDomain, nil
 }

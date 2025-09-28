@@ -42,18 +42,33 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // GetUserActionCount mocks base method.
-func (m *MockService) GetUserActionCount(ctx context.Context, id int64) (int, error) {
+func (m *MockService) GetUserActionCount(ctx context.Context, userID int64) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserActionCount", ctx, id)
+	ret := m.ctrl.Call(m, "GetUserActionCount", ctx, userID)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetUserActionCount indicates an expected call of GetUserActionCount.
-func (mr *MockServiceMockRecorder) GetUserActionCount(ctx, id any) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetUserActionCount(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserActionCount", reflect.TypeOf((*MockService)(nil).GetUserActionCount), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserActionCount", reflect.TypeOf((*MockService)(nil).GetUserActionCount), ctx, userID)
+}
+
+// GetUserByID mocks base method.
+func (m *MockService) GetUserByID(ctx context.Context, id int64) (*domain.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByID", ctx, id)
+	ret0, _ := ret[0].(*domain.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockServiceMockRecorder) GetUserByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockService)(nil).GetUserByID), ctx, id)
 }
 
 // QueryUsers mocks base method.
