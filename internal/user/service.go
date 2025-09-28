@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"go.uber.org/zap"
+
 	"surf_challenge/internal/user/domain"
 	"surf_challenge/internal/user/mapper"
 	"surf_challenge/internal/user/storage"
@@ -12,6 +13,7 @@ import (
 
 var ErrNotFound = errors.New("not found")
 
+//go:generate mockgen -source=service.go -destination=service_mock.go -package=user
 type Service interface {
 	QueryUsers(ctx context.Context, query domain.Query) ([]*domain.User, *domain.Results, error)
 }

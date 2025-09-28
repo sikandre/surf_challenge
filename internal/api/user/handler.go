@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"go.uber.org/zap"
+
 	"surf_challenge/internal/api/apierror"
 	"surf_challenge/internal/api/user/dto"
 	"surf_challenge/internal/api/user/mapper"
