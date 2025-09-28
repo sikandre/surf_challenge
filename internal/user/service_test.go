@@ -119,6 +119,7 @@ func Test_userService_GetUserActionCount(t *testing.T) {
 		repo          *storage.MockRepository
 		actionService *action.MockService
 	}
+
 	tests := []struct {
 		name    string
 		userID  int64
