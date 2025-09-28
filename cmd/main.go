@@ -16,10 +16,10 @@ import (
 
 const (
 	port              = 3000
-	ReadTimeout       = 15 * time.Second
-	ReadHeaderTimeout = 5 * time.Second
-	WriteTimeout      = 15 * time.Second
-	IdleTimeout       = 60 * time.Second
+	readTimeout       = 15 * time.Second
+	readHeaderTimeout = 5 * time.Second
+	writeTimeout      = 15 * time.Second
+	idleTimeout       = 60 * time.Second
 	headerBytes       = 1 << 20
 	duration          = 20 * time.Second
 )
@@ -37,10 +37,10 @@ func main() {
 	srv := &http.Server{
 		Addr:              addr,
 		Handler:           mux,
-		ReadTimeout:       ReadTimeout,
-		ReadHeaderTimeout: ReadHeaderTimeout,
-		WriteTimeout:      WriteTimeout,
-		IdleTimeout:       IdleTimeout,
+		ReadTimeout:       readTimeout,
+		ReadHeaderTimeout: readHeaderTimeout,
+		WriteTimeout:      writeTimeout,
+		IdleTimeout:       idleTimeout,
 		MaxHeaderBytes:    headerBytes,
 	}
 

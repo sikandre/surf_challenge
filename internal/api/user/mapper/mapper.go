@@ -25,7 +25,7 @@ func MapErrors(err error) *apierror.APIError {
 	}
 }
 
-func MapUsersToDTO(users []domain.User) []dto.User {
+func MapUsersToDTO(users []*domain.User) []dto.User {
 	userDTOs := make([]dto.User, len(users))
 	for i, u := range users {
 		userDTOs[i] = MapUserToDTO(u)
@@ -45,7 +45,7 @@ func MapPaginationToDTO(pagination *domain.Results, page int, size int) dto.Pagi
 	}
 }
 
-func MapUserToDTO(u domain.User) dto.User {
+func MapUserToDTO(u *domain.User) dto.User {
 	return dto.User{
 		ID:        u.ID,
 		Name:      u.Name,
