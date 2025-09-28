@@ -17,6 +17,7 @@ var (
 	errUsers   error
 )
 
+//go:generate mockgen -source=repository.go -destination=repository_mock.go -package=storage
 type Repository interface {
 	QueryUsers(ctx context.Context, id *int64, page int, size int) ([]*entity.User, int, error)
 }

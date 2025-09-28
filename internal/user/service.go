@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"go.uber.org/zap"
+
 	"surf_challenge/internal/user/domain"
 	"surf_challenge/internal/user/mapper"
 	"surf_challenge/internal/user/storage"

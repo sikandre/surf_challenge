@@ -101,11 +101,7 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(gitlab.com/cynergybank/fusion-reboot-poc/backend/applications-api)
         - blank
-    goimports:
-      local-prefixes:
-        - gitlab.com/cynergybank/fusion-reboot-poc/backend/applications-api
   exclusions:
     generated: lax
     paths:

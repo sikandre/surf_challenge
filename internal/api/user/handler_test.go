@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
-
 	"surf_challenge/internal/api/user/dto"
 	"surf_challenge/internal/converter"
 	"surf_challenge/internal/user"
