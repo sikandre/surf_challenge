@@ -32,7 +32,6 @@ func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Ha
 					r.Get("/next-probability", actionsHandler.GetNextActionProbability())
 				},
 			)
-
 		},
 	)
 

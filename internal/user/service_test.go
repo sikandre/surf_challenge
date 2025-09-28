@@ -236,6 +236,7 @@ func Test_userService_GetUserByID(t *testing.T) {
 		logger *zap.SugaredLogger
 		repo   *storage.MockRepository
 	}
+
 	tests := []struct {
 		name    string
 		id      int64

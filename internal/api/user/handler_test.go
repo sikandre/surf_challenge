@@ -404,6 +404,7 @@ func Test_usersHandler_GetUserByID(t *testing.T) {
 		logger  *zap.SugaredLogger
 		service *user.MockService
 	}
+
 	tests := []struct {
 		name       string
 		userID     string
