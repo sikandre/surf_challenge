@@ -80,6 +80,7 @@ func (s service) GetNextActionProbability(ctx context.Context, action string) (m
 		if len(acts) < 2 { // need curr and next action
 			continue
 		}
+
 		for i := 0; i+1 < len(acts); i++ {
 			if strings.EqualFold(acts[i].Type, action) {
 				nextActionCount[acts[i+1].Type]++
