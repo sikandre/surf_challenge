@@ -2,6 +2,7 @@ package action
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -47,7 +48,7 @@ func Test_service_GetActionByUserID(t *testing.T) {
 					Type:       "click",
 					UserID:     1,
 					TargetUser: 2,
-					CreatedAt:  "2023-10-01T10:00:00Z",
+					CreatedAt:  time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
 				},
 			},
 			wantErr: assert.NoError,

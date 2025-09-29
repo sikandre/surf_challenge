@@ -150,7 +150,7 @@ func Test_userService_GetUserActionCount(t *testing.T) {
 								Type:       "click",
 								UserID:     1,
 								TargetUser: 0,
-								CreatedAt:  "2023-10-05T12:00:00Z",
+								CreatedAt:  time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
 							},
 						}, nil,
 					)

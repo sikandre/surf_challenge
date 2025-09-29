@@ -55,3 +55,18 @@ func (mr *MockRepositoryMockRecorder) GetActionsByUserID(ctx, userID any) *gomoc
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActionsByUserID", reflect.TypeOf((*MockRepository)(nil).GetActionsByUserID), ctx, userID)
 }
+
+// GetAllActions mocks base method.
+func (m *MockRepository) GetAllActions(ctx context.Context) ([]*entity.Action, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllActions", ctx)
+	ret0, _ := ret[0].([]*entity.Action)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllActions indicates an expected call of GetAllActions.
+func (mr *MockRepositoryMockRecorder) GetAllActions(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllActions", reflect.TypeOf((*MockRepository)(nil).GetAllActions), ctx)
+}
