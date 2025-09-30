@@ -30,6 +30,7 @@ func New(sugar *zap.SugaredLogger, dependencies *container.AppContainer) http.Ha
 			r.Route(
 				"/actions", func(r chi.Router) {
 					r.Get("/next-probability", actionsHandler.GetNextActionProbability())
+					r.Get("/referrals", actionsHandler.GetReferralForUser())
 				},
 			)
 		},

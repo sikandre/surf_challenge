@@ -14,6 +14,7 @@ import (
 
 type Handler interface {
 	GetNextActionProbability() http.HandlerFunc
+	GetReferralForUser() http.HandlerFunc
 }
 
 type actionsHandler struct {
@@ -70,4 +71,38 @@ func (a actionsHandler) handleGetNextActionProbability(r *http.Request) (*dto.Ne
 	}
 
 	return probabilityDTO, nil
+}
+
+func (a actionsHandler) GetReferralForUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp, err := a.handleGetUsersReferrals(r)
+		if err != nil {
+			a.logger.Errorw("failed to get referral for user", "error", err)
+
+			apiError := mapper.MapErrors(err)
+			http.Error(w, apiError.Message, apiError.Code)
+
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		err = json.NewEncoder(w).Encode(resp)
+		if err != nil {
+			a.logger.Errorw("failed to encode response", "error", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	}
+}
+
+func (a actionsHandler) handleGetUsersReferrals(r *http.Request) (dto.ReferralResponse, error) {
+	ctx := r.Context()
+
+	referral, err := a.service.GetUsersReferrals(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return referral, nil
 }

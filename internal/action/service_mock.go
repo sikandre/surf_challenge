@@ -70,3 +70,18 @@ func (mr *MockServiceMockRecorder) GetNextActionProbability(ctx, action any) *go
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNextActionProbability", reflect.TypeOf((*MockService)(nil).GetNextActionProbability), ctx, action)
 }
+
+// GetUsersReferrals mocks base method.
+func (m *MockService) GetUsersReferrals(ctx context.Context) (map[string]int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUsersReferrals", ctx)
+	ret0, _ := ret[0].(map[string]int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUsersReferrals indicates an expected call of GetUsersReferrals.
+func (mr *MockServiceMockRecorder) GetUsersReferrals(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsersReferrals", reflect.TypeOf((*MockService)(nil).GetUsersReferrals), ctx)
+}

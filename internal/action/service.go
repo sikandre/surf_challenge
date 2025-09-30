@@ -19,6 +19,7 @@ const indexActionsNeeded = 2
 type Service interface {
 	GetActionByUserID(ctx context.Context, userID int64) ([]*domain.Action, error)
 	GetNextActionProbability(ctx context.Context, action string) (map[string]string, error)
+	GetUsersReferrals(ctx context.Context) (map[string]int, error)
 }
 
 type service struct {
@@ -121,4 +122,9 @@ func sortByCreatedAt() func(i *domain.Action, j *domain.Action) int {
 
 		return 1
 	}
+}
+
+func (s service) GetUsersReferrals(ctx context.Context) (map[string]int, error) {
+	// TODO implement me
+	panic("implement me")
 }
