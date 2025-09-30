@@ -132,9 +132,9 @@ func Test_actionsHandler_GetReferralForUser(t *testing.T) {
 			mock: func(m *mocks) {
 				m.service.EXPECT().GetUsersReferrals(gomock.Any()).
 					Return(
-						map[string]int{
-							"referral1": 5,
-							"referral2": 3,
+						map[int]int{
+							1: 5,
+							2: 3,
 						}, nil,
 					)
 			},
@@ -142,7 +142,7 @@ func Test_actionsHandler_GetReferralForUser(t *testing.T) {
 			assertBody: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				t.Helper()
 
-				wantBody := `{"referral1":5,"referral2":3}` + "\n"
+				wantBody := `{"1":5,"2":3}` + "\n"
 				require.Equal(t, wantBody, recorder.Body.String())
 			},
 		},

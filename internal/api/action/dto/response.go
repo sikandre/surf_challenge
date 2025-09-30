@@ -29,4 +29,4 @@ func (n *NextActionProbability) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-type ReferralResponse map[string]int
+type ReferralResponse map[int]int

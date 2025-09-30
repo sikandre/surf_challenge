@@ -72,10 +72,10 @@ func (mr *MockServiceMockRecorder) GetNextActionProbability(ctx, action any) *go
 }
 
 // GetUsersReferrals mocks base method.
-func (m *MockService) GetUsersReferrals(ctx context.Context) (map[string]int, error) {
+func (m *MockService) GetUsersReferrals(ctx context.Context) (map[int]int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUsersReferrals", ctx)
-	ret0, _ := ret[0].(map[string]int)
+	ret0, _ := ret[0].(map[int]int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

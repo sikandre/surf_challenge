@@ -19,7 +19,7 @@ const indexActionsNeeded = 2
 type Service interface {
 	GetActionByUserID(ctx context.Context, userID int64) ([]*domain.Action, error)
 	GetNextActionProbability(ctx context.Context, action string) (map[string]string, error)
-	GetUsersReferrals(ctx context.Context) (map[string]int, error)
+	GetUsersReferrals(ctx context.Context) (map[int]int, error)
 }
 
 type service struct {
@@ -124,7 +124,37 @@ func sortByCreatedAt() func(i *domain.Action, j *domain.Action) int {
 	}
 }
 
-func (s service) GetUsersReferrals(ctx context.Context) (map[string]int, error) {
-	// TODO implement me
-	panic("implement me")
+func (s service) GetUsersReferrals(ctx context.Context) (map[int]int, error) {
+	s.logger.Infow("GetUsersReferrals called")
+
+	actions, err := s.repo.GetAllActions(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get all actions: %w", err)
+	}
+
+	domainActions, err := mapper.MapActionsEntToDomain(actions)
+	if err != nil {
+		return nil, fmt.Errorf("failed to map actions to domain: %w", err)
+	}
+
+	graph := domain.NewGraph()
+	usersSet := make(map[int]struct{})
+
+	for _, act := range domainActions {
+		usersSet[act.UserID] = struct{}{}
+
+		if strings.EqualFold(act.Type, domain.ActionTypeReferUser) {
+			graph.AddEdge(act.UserID, act.TargetUser)
+		}
+	}
+
+	referralCount := make(map[int]int)
+	for userID := range usersSet {
+		count := graph.ReferralCount(userID)
+		if count > 0 {
+			referralCount[userID] = count
+		}
+	}
+
+	return referralCount, nil
 }
