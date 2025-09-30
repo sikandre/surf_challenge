@@ -121,6 +121,7 @@ func Test_actionsHandler_GetReferralForUser(t *testing.T) {
 		logger  *zap.SugaredLogger
 		service *action.MockService
 	}
+
 	tests := []struct {
 		name       string
 		mock       func(m *mocks)

@@ -149,6 +149,7 @@ func (s service) GetUsersReferrals(ctx context.Context) (map[int]int, error) {
 	}
 
 	referralCount := make(map[int]int)
+
 	for userID := range usersSet {
 		count := graph.ReferralCount(userID)
 		if count > 0 {

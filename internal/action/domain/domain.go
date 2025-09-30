@@ -22,6 +22,7 @@ type Graph struct {
 
 func NewGraph() *Graph {
 	nodes := make(map[int]*Node)
+
 	return &Graph{
 		nodes: nodes,
 	}
@@ -84,6 +85,7 @@ func countChildrenRec(n *Node, seen map[int]bool) int {
 	if n == nil || seen[n.UserID] {
 		return 0 // fast path to avoid cycles
 	}
+
 	seen[n.UserID] = true
 
 	total := 0
