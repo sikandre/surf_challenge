@@ -198,3 +198,107 @@ func Test_service_GetNextActionProbability(t *testing.T) {
 		)
 	}
 }
+
+func Test_service_GetUsersReferrals(t *testing.T) {
+	type mocks struct {
+		logger *zap.SugaredLogger
+		repo   *storage.MockRepository
+	}
+	tests := []struct {
+		name    string
+		mock    func(m *mocks)
+		want    map[int]int
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "should return users referrals successfully",
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetAllActions(gomock.Any()).Return(
+					[]*entity.Action{
+						{Type: domain.ActionTypeReferUser, UserID: 1, TargetUser: 2, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: domain.ActionTypeReferUser, UserID: 1, TargetUser: 3, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: domain.ActionTypeReferUser, UserID: 2, TargetUser: 4, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: "click", UserID: 2, TargetUser: 5, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: domain.ActionTypeReferUser, UserID: 3, TargetUser: 6, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: domain.ActionTypeReferUser, UserID: 3, TargetUser: 7, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: domain.ActionTypeReferUser, UserID: 3, TargetUser: 8, CreatedAt: "2023-10-01T10:00:00Z"},
+					}, nil,
+				)
+			},
+			want: map[int]int{
+				1: 6,
+				2: 1,
+				3: 3,
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "when one user refers the same user multiple times, should count only once",
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetAllActions(gomock.Any()).Return(
+					[]*entity.Action{
+						{Type: domain.ActionTypeReferUser, UserID: 1, TargetUser: 2, CreatedAt: "2023-10-01T10:00:00Z"},
+						{Type: domain.ActionTypeReferUser, UserID: 1, TargetUser: 2, CreatedAt: "2023-10-01T10:00:00Z"},
+					}, nil,
+				)
+			},
+			want: map[int]int{
+				1: 1,
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "when one user refers himself, should not count",
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetAllActions(gomock.Any()).Return(
+					[]*entity.Action{
+						{Type: domain.ActionTypeReferUser, UserID: 1, TargetUser: 1, CreatedAt: "2023-10-01T10:00:00Z"},
+					}, nil,
+				)
+			},
+			want:    map[int]int{},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "should return error when repo fails",
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetAllActions(gomock.Any()).Return(nil, assert.AnError)
+			},
+			want:    nil,
+			wantErr: assert.Error,
+		},
+		{
+			name: "should return empty map when no actions in repo",
+			mock: func(m *mocks) {
+				m.repo.EXPECT().GetAllActions(gomock.Any()).Return([]*entity.Action{}, nil)
+			},
+			want:    map[int]int{},
+			wantErr: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
+				defer ctrl.Finish()
+
+				m := &mocks{
+					logger: zap.NewNop().Sugar(),
+					repo:   storage.NewMockRepository(ctrl),
+				}
+
+				tt.mock(m)
+
+				s := &service{
+					logger: m.logger,
+					repo:   m.repo,
+				}
+
+				got, err := s.GetUsersReferrals(t.Context())
+
+				tt.wantErr(t, err)
+				assert.Equal(t, tt.want, got)
+			},
+		)
+	}
+}
