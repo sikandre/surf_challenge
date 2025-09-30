@@ -34,7 +34,8 @@ func (a actionsHandler) GetNextActionProbability() http.HandlerFunc {
 		if err != nil {
 			a.logger.Errorw("failed to get next action probability", "error", err)
 
-			http.Error(w, "Failed to get next action probability", http.StatusInternalServerError)
+			apiError := mapper.MapErrors(err)
+			http.Error(w, apiError.Message, apiError.Code)
 
 			return
 		}

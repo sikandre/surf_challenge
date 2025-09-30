@@ -13,6 +13,8 @@ import (
 	"surf_challenge/internal/action/storage"
 )
 
+const indexActionsNeeded = 2
+
 //go:generate mockgen -source=service.go -destination=service_mock.go -package=action
 type Service interface {
 	GetActionByUserID(ctx context.Context, userID int64) ([]*domain.Action, error)
@@ -77,7 +79,7 @@ func (s service) GetNextActionProbability(ctx context.Context, action string) (m
 	totalOccurrences := 0
 
 	for _, acts := range userActionsMap {
-		if len(acts) < 2 { // need curr and next action
+		if len(acts) < indexActionsNeeded { // need curr and next action
 			continue
 		}
 

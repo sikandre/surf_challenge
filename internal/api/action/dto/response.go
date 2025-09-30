@@ -25,5 +25,6 @@ func (n *NextActionProbability) MarshalJSON() ([]byte, error) {
 	}
 
 	buf.WriteString("}")
+
 	return buf.Bytes(), nil
 }

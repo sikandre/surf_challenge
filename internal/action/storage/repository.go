@@ -2,10 +2,11 @@ package storage
 
 import (
 	"context"
-	_ "embed"
 	"encoding/json"
 	"errors"
 	"sync"
+
+	_ "embed"
 
 	"surf_challenge/internal/action/storage/entity"
 )

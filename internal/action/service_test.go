@@ -97,6 +97,7 @@ func Test_service_GetNextActionProbability(t *testing.T) {
 		logger *zap.SugaredLogger
 		repo   *storage.MockRepository
 	}
+
 	tests := []struct {
 		name    string
 		action  string
