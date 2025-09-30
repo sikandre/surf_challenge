@@ -8,6 +8,7 @@ import (
 
 	"surf_challenge/internal/action"
 	"surf_challenge/internal/api/action/dto"
+	"surf_challenge/internal/api/action/mapper"
 	"surf_challenge/internal/api/apierror"
 )
 
@@ -49,7 +50,7 @@ func (a actionsHandler) GetNextActionProbability() http.HandlerFunc {
 	}
 }
 
-func (a actionsHandler) handleGetNextActionProbability(r *http.Request) (dto.NextActionProbability, error) {
+func (a actionsHandler) handleGetNextActionProbability(r *http.Request) (*dto.NextActionProbability, error) {
 	ctx := r.Context()
 
 	nextAction := r.URL.Query().Get("next")
@@ -62,5 +63,10 @@ func (a actionsHandler) handleGetNextActionProbability(r *http.Request) (dto.Nex
 		return nil, err
 	}
 
-	return probability, nil
+	probabilityDTO, err := mapper.MapProbabilityToDTO(probability)
+	if err != nil {
+		return nil, err
+	}
+
+	return probabilityDTO, nil
 }
