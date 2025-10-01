@@ -204,6 +204,7 @@ func Test_service_GetUsersReferrals(t *testing.T) {
 		logger *zap.SugaredLogger
 		repo   *storage.MockRepository
 	}
+
 	tests := []struct {
 		name    string
 		mock    func(m *mocks)
